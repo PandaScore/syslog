@@ -1,4 +1,4 @@
-defmodule Logger.Backends.Syslog do
+defmodule Logger.Backends.Sislog do
   use GenEvent
   use Bitwise
 
@@ -40,9 +40,9 @@ defmodule Logger.Backends.Syslog do
 
     level    = Keyword.get(syslog, :level)
     metadata = Keyword.get(syslog, :metadata, [])
-    host     = Keyword.get(syslog, :host, '127.0.0.1')
+    host     = Keyword.get(syslog, :host, {127,0,0,1})
     port     = Keyword.get(syslog, :port, 514)
-    facility = Keyword.get(syslog, :facility, :local2) |> Logger.Syslog.Utils.facility
+    facility = Keyword.get(syslog, :facility, :local2) |> Logger.Sislog.Utils.facility
     appid    = Keyword.get(syslog, :appid, :elixir)
     [hostname | _] = String.split("#{:net_adm.localhost()}", ".")
     %{format: format, metadata: metadata, level: level, socket: socket,
@@ -51,12 +51,14 @@ defmodule Logger.Backends.Syslog do
 
   defp log_event(level, msg, ts, md, state) do
     %{format: format, metadata: metadata, facility: facility, appid: appid,
-    hostname: _hostname, host: host, port: port, socket: socket} = state
+    hostname: hostname, host: host, port: port, socket: socket} = state
 
-    level_num = Logger.Syslog.Utils.level(level)
-    pre = :io_lib.format('<~B>~s ~s~p: ', [facility ||| level_num,
-      Logger.Syslog.Utils.iso8601_timestamp(ts), appid, self()])
+    level_num = Logger.Sislog.Utils.level(level)
+    pre = :io_lib.format('<~B>~s ~s ~s~p: ', [facility ||| level_num,
+      Logger.Sislog.Utils.iso8601_timestamp(ts), hostname, appid, self()])
+    IO.puts("PRE=#{inspect(pre)}")
     packet = [pre, Logger.Formatter.format(format, level, msg, ts, Keyword.take(md, metadata))]
+    IO.puts("PAKER=#{inspect(packet)}")
     if socket, do: :gen_udp.send(socket, host, port, packet)
   end
 end
