@@ -56,9 +56,7 @@ defmodule Logger.Backends.Sislog do
     level_num = Logger.Sislog.Utils.level(level)
     pre = :io_lib.format('<~B>~s ~s ~s~p: ', [facility ||| level_num,
       Logger.Sislog.Utils.iso8601_timestamp(ts), hostname, appid, self()])
-    IO.puts("PRE=#{inspect(pre)}")
     packet = [pre, Logger.Formatter.format(format, level, msg, ts, Keyword.take(md, metadata))]
-    IO.puts("PAKER=#{inspect(packet)}")
     if socket, do: :gen_udp.send(socket, host, port, packet)
   end
 end
