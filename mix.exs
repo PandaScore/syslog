@@ -1,8 +1,8 @@
-defmodule Sislog.Mixfile do
+defmodule Syslog.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :sislog,
+    [app: :syslog,
      version: "0.0.1",
      elixir: ">= 1.0.0",
      deps: deps()]

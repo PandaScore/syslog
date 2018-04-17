@@ -1,5 +1,5 @@
-defmodule Logger.Backends.Sislog do
-  use GenEvent
+defmodule Logger.Backends.Syslog do
+  @behaviour :gen_event
   use Bitwise
 
   def init(_) do
@@ -42,7 +42,7 @@ defmodule Logger.Backends.Sislog do
     metadata = Keyword.get(syslog, :metadata, [])
     host     = Keyword.get(syslog, :host, {127,0,0,1})
     port     = Keyword.get(syslog, :port, 514)
-    facility = Keyword.get(syslog, :facility, :local2) |> Logger.Sislog.Utils.facility
+    facility = Keyword.get(syslog, :facility, :local2) |> Logger.Syslog.Utils.facility
     appid    = Keyword.get(syslog, :appid, :elixir)
     [hostname | _] = String.split("#{:net_adm.localhost()}", ".")
     %{format: format, metadata: metadata, level: level, socket: socket,
@@ -53,9 +53,9 @@ defmodule Logger.Backends.Sislog do
     %{format: format, metadata: metadata, facility: facility, appid: appid,
     hostname: hostname, host: host, port: port, socket: socket} = state
 
-    level_num = Logger.Sislog.Utils.level(level)
+    level_num = Logger.Syslog.Utils.level(level)
     pre = :io_lib.format('<~B>~s ~s ~s~p: ', [facility ||| level_num,
-      Logger.Sislog.Utils.iso8601_timestamp(ts), hostname, appid, self()])
+      Logger.Syslog.Utils.iso8601_timestamp(ts), hostname, appid, self()])
     packet = [pre, Logger.Formatter.format(format, level, msg, ts, Keyword.take(md, metadata))]
     if socket, do: :gen_udp.send(socket, host, port, packet)
   end

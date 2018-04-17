@@ -1,4 +1,4 @@
-defmodule Logger.Sislog.Utils do
+defmodule Logger.Syslog.Utils do
   use Bitwise
 
 

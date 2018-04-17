@@ -1,7 +1,7 @@
-defmodule SislogTest do
+defmodule SyslogTest do
   use ExUnit.Case
 
-  import Logger.Backends.Sislog
+  import Logger.Backends.Syslog
 
   test "handle_event" do
     sock = nil

@@ -1,4 +1,4 @@
-alias Logger.Sislog.Utils
+alias Logger.Syslog.Utils
 defmodule Utils.TimestampTest do
   use ExUnit.Case
 
